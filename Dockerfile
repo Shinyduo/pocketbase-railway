@@ -6,11 +6,13 @@ RUN wget https://github.com/pocketbase/pocketbase/releases/download/v$(cat tag.t
     && chmod +x pocketbase
 
 FROM alpine:latest
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates \
+    && rm -rf /var/cache/apk/*
 COPY --from=download /pocketbase /usr/local/bin/pocketbase
 
-# (Optional) Copy your app data here if needed, e.g. COPY ./pb_migrations /data
+# Add the bootstrap script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
-# The critical fix: use $PORT for proper Railway routing
-ENTRYPOINT /usr/local/bin/pocketbase serve --http=0.0.0.0:$PORT --dir=/root/pocketbase
+ENTRYPOINT ["/entrypoint.sh"]
