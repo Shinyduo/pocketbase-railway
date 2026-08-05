@@ -2,7 +2,7 @@
 set -e
 
 # Start PocketBase in the background
-/usr/local/bin/pocketbase serve --http=0.0.0.0:$PORT --dir=/root/pocketbase &
+/usr/local/bin/pocketbase serve --http=0.0.0.0:${PORT:-8080} --dir=/root/pocketbase &
 PB_PID=$!
 
 # Give PocketBase a few seconds to come up

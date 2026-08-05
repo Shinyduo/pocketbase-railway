@@ -1,11 +1,11 @@
-FROM alpine:latest as download
-RUN apk add --no-cache curl unzip wget
-RUN curl -s https://get-latest.deno.dev/pocketbase/pocketbase?no-v=true > tag.txt
-RUN wget https://github.com/pocketbase/pocketbase/releases/download/v$(cat tag.txt)/pocketbase_$(cat tag.txt)_linux_amd64.zip \
-    && unzip pocketbase_$(cat tag.txt)_linux_amd64.zip \
+FROM alpine:3.22 AS download
+ARG PB_VERSION=0.39.10
+RUN apk add --no-cache unzip wget
+RUN wget -q -O pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip \
+    && unzip pocketbase.zip pocketbase \
     && chmod +x pocketbase
 
-FROM alpine:latest
+FROM alpine:3.22
 RUN apk add --no-cache ca-certificates \
     && rm -rf /var/cache/apk/*
 COPY --from=download /pocketbase /usr/local/bin/pocketbase
